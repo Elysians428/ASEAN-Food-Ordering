@@ -5,8 +5,8 @@
 
 ## 👥 Anggota Tim
 - **Salman Ahbab** – FrontEnd Developer  
-- **Nafish Ahbab** – Backend Developer  
-- **Robertson Wijaya** – Fullstack Developer  
+- **Nafish albani** – Backend Developer  
+- **Robertson Wirawan** – Fullstack Developer  
 
 ## 📖 Deskripsi Proyek
 AseanFoodOrdering adalah aplikasi pemesanan makanan berbasis web/mobile yang berfokus pada kuliner khas Asia Tenggara. Proyek ini bertujuan untuk:
