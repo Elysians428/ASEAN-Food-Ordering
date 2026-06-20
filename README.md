@@ -4,9 +4,9 @@
 **Jormungandr**
 
 ## 👥 Anggota Tim
-- **Salman Ahbab** – FrontEnd Developer  
-- **Nafish albani** – Backend Developer  
-- **Robertson Wirawan** – Fullstack Developer  
+- **Muhammad Salman Ahbab** – 140205039  
+- **Muhammad Nafish Albani Andevi Putra** - 140225067 
+- **Robertson Wirawan** – 1402025068
 
 ## 📖 Deskripsi Proyek
 AseanFoodOrdering adalah aplikasi pemesanan makanan berbasis web/mobile yang berfokus pada kuliner khas Asia Tenggara. Proyek ini bertujuan untuk:
