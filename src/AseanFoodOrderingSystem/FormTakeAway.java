@@ -22,8 +22,9 @@ public class FormTakeAway extends javax.swing.JFrame {
      */
     public FormTakeAway() {
         initComponents();
-        tampilkanMenuTakeAway();
+        tampilkanMenuTakeAway("Small");
         aturKomponenKustom();
+        
     }
     private void aturKomponenKustom() {
         // 1. Mengubah nama default tombol menjadi Konfirmasi Order
@@ -45,56 +46,50 @@ public class FormTakeAway extends javax.swing.JFrame {
         jLabel1.setText("MENU TAKE AWAY - ASEAN FOOD");
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 16));
     }
-   private void tampilkanMenuTakeAway() {
-   // 1. Array judul kolom dikurangi menjadi 4 kolom saja (Menghilangkan "Jumlah Beli")
-        String[] judulKolom = {"ID Makanan", "Nama Makanan", "Asal Negara", "Harga"};
-        
-        DefaultTableModel model = new DefaultTableModel(null, judulKolom) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                // Karena kolom Jumlah Beli sudah tidak ada, buat seluruh cell tabel tidak bisa diedit mengetik manual
-                return false;
-            }
-        };
-        
-        jTable2.setModel(model);
-        
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        
-        try {
-            java.sql.Connection conn = java.sql.DriverManager.getConnection("jdbc:mysql://localhost:3306/db_restoran_asean", "root", "");
-            java.sql.Statement stmt = conn.createStatement();
-            
-            // Query hanya mengambil menu porsi Medium bertipe take_away
-            String sql = "SELECT m.id_makanan, m.nama_makanan, m.asal_negara, v.harga " +
-                         "FROM makanan m " +
-                         "JOIN varian_porsi v ON m.id_makanan = v.id_makanan " +
-                         "WHERE v.ukuran = 'Medium' AND v.bisa_take_away = 1";
-            java.sql.ResultSet rs = stmt.executeQuery(sql);
-            
-            while (rs.next()) {
-                String namaMakanan = rs.getString("nama_makanan");
-                
-                // 2. Data array disesuaikan menjadi 4 parameter saja (Tanpa nilai kuantitas awal '0')
-                Object[] data = {
-                    rs.getInt("id_makanan"),       // Kolom 0
-                    namaMakanan,                    // Kolom 1
-                    rs.getString("asal_negara"),   // Kolom 2
-                    rs.getDouble("harga")           // Kolom 3
-                };
-                model.addRow(data);
-                
-                listModel.addElement(namaMakanan);
-            }
-            
-            jList1.setModel(listModel);
-            
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat menu Take Away: " + e.getMessage());
+    private void tampilkanMenuTakeAway(String ukuran) { // <--- Tambahkan parameter 'String ukuran'
+    String[] judulKolom = {"ID Makanan", "Nama Makanan", "Asal Negara", "Harga"};
+    
+    DefaultTableModel model = new DefaultTableModel(null, judulKolom) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
         }
+    };
+    
+    jTable2.setModel(model);
+    DefaultListModel<String> listModel = new DefaultListModel<>();
+    
+    try {
+        java.sql.Connection conn = java.sql.DriverManager.getConnection("jdbc:mysql://localhost:3306/db_restoran_asean", "root", "");
+        
+        // Query disesuaikan menggunakan parameter ?
+        String sql = "SELECT m.id_makanan, m.nama_makanan, m.asal_negara, v.harga " +
+             "FROM makanan m " +
+             "JOIN varian_porsi v ON m.id_makanan = v.id_makanan " +
+             "WHERE v.ukuran = ?";
+        java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, ukuran); // <--- Memasukkan parameter ukuran
+        java.sql.ResultSet rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            String namaMakanan = rs.getString("nama_makanan");
+            Object[] data = {
+                rs.getInt("id_makanan"),
+                namaMakanan,
+                rs.getString("asal_negara"),
+                rs.getDouble("harga")
+            };
+            model.addRow(data);
+            listModel.addElement(namaMakanan);
+        }
+        
+        jList1.setModel(listModel);
+        rs.close();
+        ps.close();
+        conn.close();
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat menu Take Away: " + e.getMessage());
+    }
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -157,6 +152,11 @@ public class FormTakeAway extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTable2);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("jButton1");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -234,8 +234,8 @@ public class FormTakeAway extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addGap(12, 12, 12)
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(137, 137, 137)
                 .addComponent(jButton1)
                 .addContainerGap(232, Short.MAX_VALUE))
         );
@@ -245,75 +245,150 @@ public class FormTakeAway extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-  String namaPelanggan = jTextField1.getText().trim();
-        int barisTerpilih = jTable2.getSelectedRow();
-        String jumlahBeliStr = jTextField2.getText().trim(); // Mengambil input jumlah dari jTextField2
         
-        // 1. Validasi Input Nama Pelanggan
-        if (namaPelanggan.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nama pelanggan belum diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+String namaPelanggan = jTextField1.getText().trim(); 
+    if (namaPelanggan.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Nama Pelanggan harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    
+    int barisTerpilih = jTable2.getSelectedRow();
+    if (barisTerpilih == -1) {
+        JOptionPane.showMessageDialog(this, "Silakan pilih makanan dari tabel terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int idMakanan = Integer.parseInt(jTable2.getValueAt(barisTerpilih, 0).toString());
+    String namaMakanan = jTable2.getValueAt(barisTerpilih, 1).toString();
+
+  
+    String ukuranPorsi = jComboBox1.getSelectedItem().toString();
+
+    
+    String strJumlah = jTextField2.getText().trim(); 
+    if (strJumlah.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Jumlah porsi harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    int jumlahBeli = 0;
+    try {
+        jumlahBeli = Integer.parseInt(strJumlah);
+        if (jumlahBeli <= 0) {
+            JOptionPane.showMessageDialog(this, "Jumlah porsi harus lebih dari 0!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Jumlah porsi harus berupa angka!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    // 5. KONEKSI DATABASE & CEK STOK (Aman, Mengambil langsung dari varian_porsi)
+    double hargaSatuan = 0;
+    int stokTersedia = 0;
+    int idVarian = 0;
+    int bisaTakeAway = 0; // BERUBAH: Mengubah pengecekan hak akses ke bisa_take_away
+
+    String url = "jdbc:mysql://localhost:3306/db_restoran_asean";
+    String user = "root";
+    String pass = "";
+
+    // BERUBAH: Memastikan field bisa_take_away yang ditarik, bukan bisa_dine_in
+    String sqlCek = "SELECT id_varian, harga, stok, bisa_take_away FROM varian_porsi WHERE id_makanan = ? AND ukuran = ?";
+    
+    try (java.sql.Connection conn = java.sql.DriverManager.getConnection(url, user, pass);
+         java.sql.PreparedStatement psCek = conn.prepareStatement(sqlCek)) {
         
-        // 2. Validasi Seleksi Menu pada Tabel
-        if (barisTerpilih == -1) {
-            JOptionPane.showMessageDialog(this, "Silakan pilih menu makanan pada tabel terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        psCek.setInt(1, idMakanan);
+        psCek.setString(2, ukuranPorsi);
         
-        // 3. Validasi Input Jumlah Beli di jTextField2
-        if (jumlahBeliStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Jumlah makanan belum diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // 4. Mengambil Data dari Baris Tabel (Struktur 4 Kolom)
-        String namaMakanan = jTable2.getValueAt(barisTerpilih, 1).toString(); // Kolom indeks 1 (Nama Makanan)
-        double hargaSatuan = Double.parseDouble(jTable2.getValueAt(barisTerpilih, 3).toString()); // Kolom indeks 3 (Harga)
-        
-        // Mengambil pilihan ukuran dari JComboBox
-        String ukuranPorsi = jComboBox1.getSelectedItem().toString(); 
-        
-        try {
-            // Mengubah input string jumlah menjadi angka integer
-            int jumlahBeli = Integer.parseInt(jumlahBeliStr);
-            
-            if (jumlahBeli <= 0) {
-                JOptionPane.showMessageDialog(this, "Jumlah beli minimal harus 1!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        try (java.sql.ResultSet rsCek = psCek.executeQuery()) {
+            if (rsCek.next()) {
+                idVarian = rsCek.getInt("id_varian");
+                hargaSatuan = rsCek.getDouble("harga");
+                stokTersedia = rsCek.getInt("stok");
+                bisaTakeAway = rsCek.getInt("bisa_take_away");
+            } else {
+                JOptionPane.showMessageDialog(this, "Varian porsi " + ukuranPorsi + " untuk menu ini tidak ditemukan!", "Kesalahan", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+        } 
+    } catch (java.sql.SQLException e) {
+        JOptionPane.showMessageDialog(this, "Gagal memeriksa stok ke database:\n" + e.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    
+    if (jumlahBeli > stokTersedia) {
+        JOptionPane.showMessageDialog(this, "Stok tidak mencukupi! Pembelian maksimal porsi ini adalah: " + stokTersedia + " porsi.", "Stok Habis", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+   
+    double totalHarga = hargaSatuan * jumlahBeli;
+
+   
+    String struk = "============== STRUK TAKE AWAY ==============\n" +
+                   "Nama Pelanggan  : " + namaPelanggan + "\n" +
+                   "Menu Makanan    : " + namaMakanan + "\n" +
+                   "Pilihan Ukuran   : " + ukuranPorsi + "\n" +
+                   "Jumlah Porsi    : " + jumlahBeli + " Porsi\n" +
+                   "Harga Per Porsi : Rp " + hargaSatuan + "\n" +
+                   "-------------------------------------------\n" +
+                   "Total Pembayaran: Rp " + totalHarga + "\n\n" +
+                   "Apakah pesanan Take Away ini sudah benar?";
+
+    int konfirmasi = JOptionPane.showConfirmDialog(this, struk, "Konfirmasi Pemesanan", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+    
+    if (konfirmasi == JOptionPane.YES_OPTION) {
+        String sqlUpdateStok = "UPDATE varian_porsi SET stok = stok - ? WHERE id_varian = ?";
+        
+        
+        String sqlInsertPesanan = "INSERT INTO pesanan (nama_pelanggan, tipe_pesanan, no_meja, id_varian, total_harga_rp) VALUES (?, 'TAKEAWAY', NULL, ?, ?)"; 
+        
+        try (java.sql.Connection conn = java.sql.DriverManager.getConnection(url, user, pass)) {
+            conn.setAutoCommit(false); 
             
-            // Perhitungan total harga transaksi
-            double totalHarga = hargaSatuan * jumlahBeli;
-            
-            // 5. Struktur Output Tampilan Struk Konfirmasi
-            String detailNota = "============= STRUK PESANAN =============\n" +
-                                "Nama Pelanggan  : " + namaPelanggan + "\n" +
-                                "Menu Makanan    : " + namaMakanan + "\n" +
-                                "Pilihan Ukuran  : " + ukuranPorsi + "\n" +
-                                "Jumlah Porsi    : " + jumlahBeli + " Porsi\n" +
-                                "Harga Per Porsi : Rp " + hargaSatuan + "\n" +
-                                "---------------------------------------\n" +
-                                "Total Pembayaran: Rp " + totalHarga + "\n\n" +
-                                "Apakah pesanan ini sudah benar?";
-            
-            int konfirmasi = JOptionPane.showConfirmDialog(this, detailNota, "Konfirmasi Pemesanan", JOptionPane.YES_NO_OPTION);
-            
-            if (konfirmasi == JOptionPane.YES_OPTION) {
-                JOptionPane.showMessageDialog(this, "Order Berhasil Diproses!");
+            try (java.sql.PreparedStatement psUpdate = conn.prepareStatement(sqlUpdateStok);
+                 java.sql.PreparedStatement psInsert = conn.prepareStatement(sqlInsertPesanan)) {
                 
-                // Reset semua Form inputan agar kosong kembali dan siap menerima order baru
+                psUpdate.setInt(1, jumlahBeli);
+                psUpdate.setInt(2, idVarian);
+                psUpdate.executeUpdate();
+                
+                psInsert.setString(1, namaPelanggan);
+                psInsert.setInt(2, idVarian);
+                psInsert.setInt(3, (int) totalHarga);
+                psInsert.executeUpdate();
+                
+                conn.commit(); 
+                JOptionPane.showMessageDialog(this, "Pesanan Take Away berhasil diproses!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                
+           
                 jTextField1.setText("");
-                jTextField2.setText(""); // Membersihkan teks jumlah makanan
+                jTextField2.setText("");
                 jTable2.clearSelection();
+                
+           
+                tampilkanMenuTakeAway(jComboBox1.getSelectedItem().toString());
+                
+            } catch (java.sql.SQLException ex) {
+                conn.rollback(); 
+                throw ex;
             }
-            
-        } catch (NumberFormatException e) {
-            // Menangkap error jika user menginput huruf atau simbol ke dalam jTextField2
-            JOptionPane.showMessageDialog(this, "Format input pada kolom 'Jumlah' harus berupa angka!", "Gagal Konfirmasi", JOptionPane.ERROR_MESSAGE);
+        } catch (java.sql.SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal memproses transaksi ke database:\n" + e.getMessage(), "Error Transaksi", JOptionPane.ERROR_MESSAGE);
         }
+    }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+        String ukuranTerpilih = jComboBox1.getSelectedItem().toString();
+        tampilkanMenuTakeAway(ukuranTerpilih);
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments

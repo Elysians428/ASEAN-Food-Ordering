@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 11, 2026 at 11:40 AM
+-- Generation Time: Jun 24, 2026 at 10:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -99,9 +99,7 @@ CREATE TABLE `pesanan` (
 --
 
 INSERT INTO `pesanan` (`id_pesanan`, `nama_pelanggan`, `tipe_pesanan`, `no_meja`, `id_varian`, `total_harga_rp`, `waktu_pesan`) VALUES
-(1, 'hgjvfcgj', 'DINE IN', 5, 16, 26000, '2026-06-06 10:22:07'),
-(2, 'aedraefdsafad', 'DINE IN', 6, 1, 0, '2026-06-07 10:50:51'),
-(3, 'reresfrstw', 'DINE IN', 1, 1, 0, '2026-06-07 10:55:07');
+(1, 'eqfde', 'TAKEAWAY', NULL, 6, 110000, '2026-06-20 10:05:34');
 
 -- --------------------------------------------------------
 
@@ -115,47 +113,48 @@ CREATE TABLE `varian_porsi` (
   `ukuran` enum('Small','Medium','Large') NOT NULL,
   `harga` decimal(10,2) NOT NULL,
   `bisa_dine_in` tinyint(1) DEFAULT 1,
-  `bisa_take_away` tinyint(1) DEFAULT 1
+  `bisa_take_away` tinyint(1) DEFAULT 1,
+  `stok` int(11) NOT NULL DEFAULT 20
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `varian_porsi`
 --
 
-INSERT INTO `varian_porsi` (`id_varian`, `id_makanan`, `ukuran`, `harga`, `bisa_dine_in`, `bisa_take_away`) VALUES
-(1, 1, 'Small', 25000.00, 1, 1),
-(2, 1, 'Medium', 45000.00, 1, 1),
-(3, 1, 'Large', 80000.00, 1, 1),
-(4, 2, 'Small', 20000.00, 1, 1),
-(5, 2, 'Medium', 35000.00, 1, 1),
-(6, 2, 'Large', 55000.00, 1, 1),
-(7, 3, 'Small', 22000.00, 1, 1),
-(8, 3, 'Medium', 40000.00, 1, 1),
-(9, 3, 'Large', 60000.00, 1, 1),
-(10, 4, 'Small', 30000.00, 1, 1),
-(11, 4, 'Medium', 50000.00, 1, 1),
-(12, 4, 'Large', 85000.00, 1, 0),
-(13, 5, 'Small', 28000.00, 1, 1),
-(14, 5, 'Medium', 48000.00, 1, 1),
-(15, 5, 'Large', 70000.00, 1, 1),
-(16, 6, 'Small', 26000.00, 1, 1),
-(17, 6, 'Medium', 45000.00, 1, 1),
-(18, 6, 'Large', 68000.00, 1, 1),
-(19, 7, 'Small', 30000.00, 1, 1),
-(20, 7, 'Medium', 55000.00, 1, 1),
-(21, 7, 'Large', 80000.00, 1, 0),
-(22, 8, 'Small', 22000.00, 1, 1),
-(23, 8, 'Medium', 38000.00, 1, 1),
-(24, 8, 'Large', 55000.00, 1, 0),
-(25, 9, 'Small', 20000.00, 1, 1),
-(26, 9, 'Medium', 35000.00, 1, 1),
-(27, 9, 'Large', 50000.00, 1, 1),
-(28, 10, 'Small', 18000.00, 1, 1),
-(29, 10, 'Medium', 32000.00, 1, 1),
-(30, 10, 'Large', 45000.00, 1, 1),
-(31, 11, 'Small', 24000.00, 1, 1),
-(32, 11, 'Medium', 42000.00, 1, 1),
-(33, 11, 'Large', 60000.00, 1, 0);
+INSERT INTO `varian_porsi` (`id_varian`, `id_makanan`, `ukuran`, `harga`, `bisa_dine_in`, `bisa_take_away`, `stok`) VALUES
+(1, 1, 'Small', 25000.00, 1, 1, 20),
+(2, 1, 'Medium', 45000.00, 1, 1, 20),
+(3, 1, 'Large', 80000.00, 1, 1, 20),
+(4, 2, 'Small', 20000.00, 1, 1, 20),
+(5, 2, 'Medium', 35000.00, 1, 1, 20),
+(6, 2, 'Large', 55000.00, 1, 1, 18),
+(7, 3, 'Small', 22000.00, 1, 1, 20),
+(8, 3, 'Medium', 40000.00, 1, 1, 20),
+(9, 3, 'Large', 60000.00, 1, 1, 20),
+(10, 4, 'Small', 30000.00, 1, 1, 20),
+(11, 4, 'Medium', 50000.00, 1, 1, 20),
+(12, 4, 'Large', 85000.00, 1, 1, 20),
+(13, 5, 'Small', 28000.00, 1, 1, 20),
+(14, 5, 'Medium', 48000.00, 1, 1, 20),
+(15, 5, 'Large', 70000.00, 1, 1, 20),
+(16, 6, 'Small', 26000.00, 1, 1, 20),
+(17, 6, 'Medium', 45000.00, 1, 1, 20),
+(18, 6, 'Large', 68000.00, 1, 1, 20),
+(19, 7, 'Small', 30000.00, 1, 1, 20),
+(20, 7, 'Medium', 55000.00, 1, 1, 20),
+(21, 7, 'Large', 80000.00, 1, 1, 20),
+(22, 8, 'Small', 22000.00, 1, 1, 20),
+(23, 8, 'Medium', 38000.00, 1, 1, 20),
+(24, 8, 'Large', 55000.00, 1, 1, 20),
+(25, 9, 'Small', 20000.00, 1, 1, 20),
+(26, 9, 'Medium', 35000.00, 1, 1, 20),
+(27, 9, 'Large', 50000.00, 1, 1, 20),
+(28, 10, 'Small', 18000.00, 1, 1, 20),
+(29, 10, 'Medium', 32000.00, 1, 1, 20),
+(30, 10, 'Large', 45000.00, 1, 1, 20),
+(31, 11, 'Small', 24000.00, 1, 1, 20),
+(32, 11, 'Medium', 42000.00, 1, 1, 20),
+(33, 11, 'Large', 60000.00, 1, 1, 20);
 
 --
 -- Indexes for dumped tables
@@ -202,7 +201,7 @@ ALTER TABLE `makanan`
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `varian_porsi`

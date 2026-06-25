@@ -33,6 +33,7 @@ setLocationRelativeTo(null);
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        btnAdmin = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btnDineIn = new javax.swing.JButton();
         btnTakeAway = new javax.swing.JButton();
@@ -42,6 +43,14 @@ setLocationRelativeTo(null);
         setResizable(false);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnAdmin.setText("Mode Admin");
+        btnAdmin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdminActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 30, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Times New Roman", 2, 12)); // NOI18N
         jLabel1.setText("DINE IN OR TAKEAWAY");
@@ -67,7 +76,7 @@ setLocationRelativeTo(null);
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AseanFoodOrderingSystem/images/WhatsApp Image 2026-06-07 at 14.07.22.jpeg"))); // NOI18N
         jLabel2.setText("jLabel2");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 920));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -98,6 +107,18 @@ setLocationRelativeTo(null);
         this.dispose();
 // TODO add your handling code here:
     }//GEN-LAST:event_btnTakeAwayActionPerformed
+
+    private void btnAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdminActionPerformed
+        // TODO add your handling code here:
+        // 1. Menutup halaman Menu Utama agar tidak menumpuk di layar
+this.dispose(); 
+
+// 2. Membuat objek baru dari halaman Dashboard Admin
+DashboardAdmin halamanAdmin = new DashboardAdmin();
+
+// 3. Menampilkan halaman Dashboard Admin ke layar
+halamanAdmin.setVisible(true);
+    }//GEN-LAST:event_btnAdminActionPerformed
 
     /**
      * @param args the command line arguments
@@ -135,6 +156,7 @@ setLocationRelativeTo(null);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdmin;
     private javax.swing.JButton btnDineIn;
     private javax.swing.JButton btnTakeAway;
     private javax.swing.JLabel jLabel1;
