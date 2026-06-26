@@ -103,7 +103,7 @@ setLocationRelativeTo(null);
     }//GEN-LAST:event_btnDineInActionPerformed
 
     private void btnTakeAwayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTakeAwayActionPerformed
-    new FormTakeAway().setVisible(true);
+    new makanDiSini().setVisible(true);
         this.dispose();
 // TODO add your handling code here:
     }//GEN-LAST:event_btnTakeAwayActionPerformed

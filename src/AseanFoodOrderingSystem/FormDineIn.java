@@ -31,37 +31,50 @@ public class FormDineIn extends javax.swing.JFrame {
     // HAPUS BAGIAN INI (Baris 11-16 di dalam class kamu)
     
     public void tampilkanTabelKetersediaanMeja() {
-       String[] judulKolom = {"No. Meja", "Status Meja"};
-        javax.swing.table.DefaultTableModel modelMeja = new javax.swing.table.DefaultTableModel(null, judulKolom) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Mengunci cell agar tidak bisa diketik manual
-            }
-        };
-        
-        // Menghubungkan model ke JTable yang sudah kamu drag di NetBeans
-        tabelMejaAdmin.setModel(modelMeja);
-        
-        try {
-            java.sql.Connection conn = java.sql.DriverManager.getConnection("jdbc:mysql://localhost:3306/db_restoran_asean", "root", "");
-            java.sql.Statement stmt = conn.createStatement();
-            String sql = "SELECT no_meja, status_meja FROM data_meja ORDER BY no_meja ASC";
-            java.sql.ResultSet rs = stmt.executeQuery(sql);
-            
-            while (rs.next()) {
-                Object[] data = {
-                    "Meja " + rs.getInt("no_meja"),
-                    rs.getString("status_meja")
-                };
-                modelMeja.addRow(data);
-            }
-            
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat tabel status meja: " + e.getMessage());
+      String[] judulKolom = {"No. Meja", "Status Meja", "Pengguna"};
+    javax.swing.table.DefaultTableModel modelMeja = new javax.swing.table.DefaultTableModel(null, judulKolom) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // Mengunci cell agar tidak bisa diketik manual
         }
+    };
+    
+    tabelMejaAdmin.setModel(modelMeja);
+    
+    try {
+        java.sql.Connection conn = java.sql.DriverManager.getConnection("jdbc:mysql://localhost:3306/db_restoran_asean", "root", "");
+        java.sql.Statement stmt = conn.createStatement();
+        
+        // 2. Gunakan LEFT JOIN agar nama pelanggan dari tabel pesanan terbaru bisa ditarik berdasarkan nomor meja
+        String sql = "SELECT m.no_meja, m.status_meja, p.nama_pelanggan " +
+                     "FROM data_meja m " +
+                     "LEFT JOIN pesanan p ON m.no_meja = p.no_meja " +
+                     "AND p.id_pesanan = (SELECT MAX(id_pesanan) FROM pesanan WHERE no_meja = m.no_meja) " +
+                     "ORDER BY m.no_meja ASC";
+                     
+        java.sql.ResultSet rs = stmt.executeQuery(sql);
+        
+        while (rs.next()) {
+            // Jika statusnya Tersedia, maka nama penggunanya kosong ("-")
+            String namaPengguna = rs.getString("nama_pelanggan");
+            if (namaPengguna == null || rs.getString("status_meja").equals("Tersedia")) {
+                namaPengguna = "-";
+            }
+            
+            Object[] data = {
+                "Meja " + rs.getInt("no_meja"),
+                rs.getString("status_meja"),
+                namaPengguna
+            };
+            modelMeja.addRow(data);
+        }
+        
+        rs.close();
+        stmt.close();
+        conn.close();
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat tabel status meja: " + e.getMessage());
+    }
     }
     public void tampilkanMejaTersedia() {
   cbMeja.removeAllItems(); 
@@ -141,6 +154,7 @@ public class FormDineIn extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelMejaAdmin = new javax.swing.JTable();
         btnEditStatusMeja = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -183,28 +197,40 @@ public class FormDineIn extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Back");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnEditStatusMeja))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNama, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(h, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(288, 288, 288)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(cbMeja, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnPesan)))))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnEditStatusMeja))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtNama, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(h, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(288, 288, 288)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(cbMeja, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnPesan))))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(jButton1)))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -217,7 +243,9 @@ public class FormDineIn extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(17, 17, 17)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(90, 90, 90)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addGap(49, 49, 49)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(h)
                     .addComponent(jLabel1))
@@ -352,6 +380,15 @@ public class FormDineIn extends javax.swing.JFrame {
         }   
     }//GEN-LAST:event_btnEditStatusMejaActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        // 1. Membuka kembali menu utama
+        new MenuUtama().setVisible(true);
+        
+        // 2. Menutup form dine in yang sekarang sedang aktif
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      
@@ -387,6 +424,7 @@ public class FormDineIn extends javax.swing.JFrame {
     private javax.swing.JButton btnPesan;
     private javax.swing.JComboBox<String> cbMeja;
     private javax.swing.JLabel h;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JProgressBar jProgressBar1;

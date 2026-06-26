@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2026 at 10:11 AM
+-- Generation Time: Jun 26, 2026 at 12:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -87,7 +87,7 @@ INSERT INTO `makanan` (`id_makanan`, `nama_makanan`, `asal_negara`, `created_at`
 CREATE TABLE `pesanan` (
   `id_pesanan` int(11) NOT NULL,
   `nama_pelanggan` varchar(100) NOT NULL,
-  `tipe_pesanan` enum('DINE IN','TAKEAWAY') NOT NULL,
+  `tipe_pesanan` varchar(20) NOT NULL,
   `no_meja` int(11) DEFAULT NULL,
   `id_varian` int(11) NOT NULL,
   `total_harga_rp` int(11) NOT NULL,
@@ -201,7 +201,7 @@ ALTER TABLE `makanan`
 -- AUTO_INCREMENT for table `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_pesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `varian_porsi`
