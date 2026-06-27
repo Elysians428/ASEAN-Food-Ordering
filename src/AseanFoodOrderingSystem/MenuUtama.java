@@ -37,6 +37,7 @@ setLocationRelativeTo(null);
         jLabel1 = new javax.swing.JLabel();
         btnDineIn = new javax.swing.JButton();
         btnTakeAway = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -50,11 +51,11 @@ setLocationRelativeTo(null);
                 btnAdminActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 30, -1, -1));
+        jPanel1.add(btnAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 20, -1, -1));
 
-        jLabel1.setFont(new java.awt.Font("Times New Roman", 2, 12)); // NOI18N
-        jLabel1.setText("DINE IN OR TAKEAWAY");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 58, 156, -1));
+        jLabel1.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        jLabel1.setText("DINE IN OR TAKEAWAY?");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 120, 280, -1));
 
         btnDineIn.setFont(new java.awt.Font("Times New Roman", 2, 12)); // NOI18N
         btnDineIn.setText("DINE IN");
@@ -73,6 +74,10 @@ setLocationRelativeTo(null);
             }
         });
         jPanel1.add(btnTakeAway, new org.netbeans.lib.awtextra.AbsoluteConstraints(679, 617, -1, -1));
+
+        jLabel3.setFont(new java.awt.Font("Times New Roman", 3, 48)); // NOI18N
+        jLabel3.setText("ASEAN FOOD CATHERING");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, 600, 80));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AseanFoodOrderingSystem/images/WhatsApp Image 2026-06-07 at 14.07.22.jpeg"))); // NOI18N
         jLabel2.setText("jLabel2");
@@ -161,6 +166,7 @@ halamanAdmin.setVisible(true);
     private javax.swing.JButton btnTakeAway;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
